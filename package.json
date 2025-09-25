@@ -1,0 +1,12 @@
+{
+  "name": "csc-307-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
