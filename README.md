@@ -1,1 +1,1 @@
-First Lab for CSC 307, REACT APP
+Now it's second lap (table lab) for CSC 307
