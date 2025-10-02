@@ -53,6 +53,18 @@ app.get("/users/:id", (req, res) => {
   }
 });
 
+const addUser = (user) => {
+  users["users_list"].push(user);
+  return user;
+};
+
+app.post("/users", (req, res) => {
+  const userToAdd = req.body;
+  addUser(userToAdd);
+  // 200 OK (empty body). You could also send back the user or 201 Created.
+  res.send();
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
