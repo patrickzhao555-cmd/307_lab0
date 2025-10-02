@@ -2,9 +2,16 @@
   "name": "csc-307-app",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "npm -w packages/react-frontend run dev"
+    "dev": "npm -w packages/react-frontend run dev",
+    "dev:backend": "npm -w packages/express-backend run dev",
+    "start:backend": "npm -w packages/express-backend run start"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
