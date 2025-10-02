@@ -20,9 +20,26 @@ app.get("/", (req, res) => {
 });
 
 // GET /users  (all users)
+// helper
+const findUserByName = (name) =>
+  users["users_list"].filter((u) => u["name"] === name);
+
+// GET /users and /users?name=Mac (and step 7 will add job filter too)
 app.get("/users", (req, res) => {
-  res.send(users);
+  const { name, job } = req.query;
+
+  let result = users["users_list"];
+
+  if (name !== undefined) {
+    result = result.filter((u) => u.name === name);
+  }
+  if (job !== undefined) {
+    result = result.filter((u) => u.job === job);
+  }
+
+  res.send({ users_list: result });
 });
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
