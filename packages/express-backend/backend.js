@@ -65,6 +65,19 @@ app.post("/users", (req, res) => {
   res.send();
 });
 
+app.delete("/users/:id", (req, res) => {
+  const { id } = req.params;
+  const before = users.users_list.length;
+  users.users_list = users.users_list.filter((u) => u.id !== id);
+  const after = users.users_list.length;
+
+  if (after === before) {
+    // nothing removed
+    return res.status(404).send("Resource not found.");
+  }
+  return res.status(204).send(); // No Content
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
