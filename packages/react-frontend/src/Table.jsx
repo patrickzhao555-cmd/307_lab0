@@ -4,6 +4,7 @@ function TableHeader() {
   return (
     <thead>
       <tr>
+        <th>ID</th>
         <th>Name</th>
         <th>Job</th>
         <th>Remove</th>
@@ -12,20 +13,24 @@ function TableHeader() {
   );
 }
 
-function TableBody(props) {
-  const rows = props.characterData.map((row, index) => (
-    <tr key={index}>
-      <td>{row.name}</td>
-      <td>{row.job}</td>
-      <td>
-        <button onClick={() => props.removeCharacter(index)}>Delete</button>
-      </td>
-    </tr>
-  ));
-  return <tbody>{rows}</tbody>;
+function TableBody({ characterData, removeCharacter }) {
+  return (
+    <tbody>
+      {characterData.map((row) => (
+        <tr key={row.id ?? `${row.name}-${row.job}`}>
+          <td>{row.id}</td>
+          <td>{row.name}</td>
+          <td>{row.job}</td>
+          <td>
+            <button onClick={() => removeCharacter(row.id)}>Delete</button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  );
 }
 
-function Table(props) {
+export default function Table(props) {
   return (
     <table>
       <TableHeader />
@@ -36,4 +41,3 @@ function Table(props) {
     </table>
   );
 }
-export default Table;
