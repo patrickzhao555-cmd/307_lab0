@@ -10,7 +10,6 @@ export default function MyApp() {
   function fetchUsers() {
     return fetch(`${BASE_URL}/users`);
   }
-
   function postUser(person) {
     return fetch(`${BASE_URL}/users`, {
       method: "POST",
@@ -18,7 +17,6 @@ export default function MyApp() {
       body: JSON.stringify(person),
     });
   }
-
   function deleteUser(id) {
     return fetch(`${BASE_URL}/users/${id}`, { method: "DELETE" });
   }
@@ -43,13 +41,12 @@ export default function MyApp() {
   function removeOneCharacter(id) {
     deleteUser(id)
       .then((res) => {
-        if (res.status === 204) {
-          setCharacters((prev) => prev.filter((c) => c.id !== id));
-        } else if (res.status === 404) {
-          console.log("Not found in backend; leaving UI unchanged.");
-        } else {
+        if (res.status === 204)
+          setCharacters((prev) => prev.filter((c) => c._id !== id));
+        else if (res.status === 404)
+          console.log("Not found in backend");
+        else
           console.log("Unexpected status:", res.status);
-        }
       })
       .catch((err) => console.log(err));
   }
