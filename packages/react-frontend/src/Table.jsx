@@ -17,12 +17,12 @@ function TableBody({ characterData, removeCharacter }) {
   return (
     <tbody>
       {characterData.map((row) => (
-        <tr key={row.id ?? `${row.name}-${row.job}`}>
-          <td>{row.id}</td>
+        <tr key={row._id ?? `${row.name}-${row.job}`}>
+          <td>{row._id}</td>
           <td>{row.name}</td>
           <td>{row.job}</td>
           <td>
-            <button onClick={() => removeCharacter(row.id)}>Delete</button>
+            <button onClick={() => removeCharacter(row._id)}>Delete</button>
           </td>
         </tr>
       ))}
