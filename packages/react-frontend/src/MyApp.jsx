@@ -41,22 +41,16 @@ export default function MyApp() {
   function removeOneCharacter(id) {
     deleteUser(id)
       .then((res) => {
-        if (res.status === 204)
-          setCharacters((prev) => prev.filter((c) => c._id !== id));
-        else if (res.status === 404)
-          console.log("Not found in backend");
-        else
-          console.log("Unexpected status:", res.status);
+        if (res.status === 204) setCharacters((prev) => prev.filter((c) => c._id !== id));
+        else if (res.status === 404) console.log("Not found in backend");
+        else console.log("Unexpected status:", res.status);
       })
       .catch((err) => console.log(err));
   }
 
   return (
     <div className="container">
-      <Table
-        characterData={characters}
-        removeCharacter={removeOneCharacter}
-      />
+      <Table characterData={characters} removeCharacter={removeOneCharacter} />
       <Form handleSubmit={updateList} />
     </div>
   );
