@@ -8,10 +8,13 @@
   "scripts": {
     "dev": "npm -w packages/react-frontend run dev",
     "dev:backend": "npm -w packages/express-backend run dev",
-    "start:backend": "npm -w packages/express-backend run start"
+    "start:backend": "npm -w packages/express-backend run start",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:all": "npm -w packages/react-frontend run lint && npm -w packages/express-backend run lint"
   },
   "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^3.1.10"
+  "dependencies": {
+    "mongodb": "^6.20.0"
   }
 }

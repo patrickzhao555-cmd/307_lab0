@@ -1,5 +1,7 @@
 import express from "express";
+import "dotenv/config";
 import cors from "cors";
+
 import {
   connectDB,
   getAllUsers,
@@ -8,61 +10,77 @@ import {
   findByNameAndJob,
   findById,
   createUser,
-  deleteById
+  deleteById,
 } from "./user-services.js";
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 app.use(cors());
 app.use(express.json());
 
-/* connect once on startup (ok to not await: Mongoose buffers commands) */
-connectDB().catch((e) => console.error("Mongo connect error:", e));
-
 app.get("/", (_req, res) => res.send("Hello World!"));
 
-/* GET /users  (+ ?name=... &/or ?job=...) */
-app.get("/users", (req, res) => {
-  const { name, job } = req.query;
-  let q;
-  if (name && job)      q = findByNameAndJob(name, job);
-  else if (name)        q = findByName(name);
-  else if (job)         q = findByJob(job);
-  else                  q = getAllUsers();
+// GET /users  (+ ?name=... &/or ?job=...)
+app.get("/users", async (req, res) => {
+  try {
+    const { name, job } = req.query;
+    let result;
+    if (name && job) result = await findByNameAndJob(name, job);
+    else if (name) result = await findByName(name);
+    else if (job) result = await findByJob(job);
+    else result = await getAllUsers();
 
-  q.then((list) => res.send({ users_list: list }))
-   .catch((err) => res.status(500).send(String(err)));
+    res.send({ users_list: result });
+  } catch (err) {
+    res.status(500).send(String(err));
+  }
 });
 
-/* GET /users/:id */
-app.get("/users/:id", (req, res) => {
-  findById(req.params.id)
-    .then((doc) => {
-      if (!doc) return res.status(404).send("Resource not found.");
-      res.send(doc);
-    })
-    .catch((err) => res.status(500).send(String(err)));
+// GET /users/:id
+app.get("/users/:id", async (req, res) => {
+  try {
+    const doc = await findById(req.params.id);
+    if (!doc) return res.status(404).send("Resource not found.");
+    res.send(doc);
+  } catch (err) {
+    if (err?.name === "CastError") return res.status(400).send("Invalid id.");
+    res.status(500).send(String(err));
+  }
 });
 
-/* POST /users -> 201 Created + return created doc (with _id) */
-app.post("/users", (req, res) => {
-  const { name, job } = req.body || {};
-  createUser({ name, job })
-    .then((created) => res.status(201).send(created))
-    .catch((err) => res.status(400).send(String(err)));
+// POST /users -> 201 Created + return created doc (with _id)
+app.post("/users", async (req, res) => {
+  try {
+    const { name, job } = req.body || {};
+    if (!name || !job) return res.status(400).send("name and job are required");
+    const created = await createUser({ name, job });
+    res.status(201).send(created);
+  } catch (err) {
+    res.status(400).send(String(err));
+  }
 });
 
-/* DELETE /users/:id -> 204 or 404 */
-app.delete("/users/:id", (req, res) => {
-  deleteById(req.params.id)
-    .then((doc) => {
-      if (!doc) return res.status(404).send("Resource not found.");
-      res.status(204).send();
-    })
-    .catch((err) => res.status(500).send(String(err)));
+// DELETE /users/:id -> 204 or 404
+app.delete("/users/:id", async (req, res) => {
+  try {
+    const deleted = await deleteById(req.params.id);
+    if (!deleted) return res.status(404).send("Resource not found.");
+    res.status(204).send();
+  } catch (err) {
+    if (err?.name === "CastError") return res.status(400).send("Invalid id.");
+    res.status(500).send(String(err));
+  }
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+// Start only after DB connects
+connectDB()
+  .then(() => {
+    app.listen(port, () =>
+      console.log(`Example app listening at http://localhost:${port}`)
+    );
+  })
+  .catch((e) => {
+    console.error("Mongo connect error:", e);
+    process.exit(1);
+  });
