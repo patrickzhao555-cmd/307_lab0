@@ -1,8 +1,21 @@
+// src/MyApp.jsx
 import React, { useState, useEffect } from "react";
-import Table from "./Table";
-import Form from "./Form";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import LegacySim from "./simulator/LegacySim";
+import Table from "./Table";   // <-- change to "./Components/Table" if needed
+import Form from "./Form";     // <-- change to "./Components/Form"  if needed
 
 const BASE_URL = "http://localhost:8000";
+
+// Small dashboard component so we can route to it
+function Dashboard({ characters, removeOneCharacter, updateList }) {
+  return (
+    <div className="container">
+      <Table characterData={characters} removeCharacter={removeOneCharacter} />
+      <Form handleSubmit={updateList} />
+    </div>
+  );
+}
 
 export default function MyApp() {
   const [characters, setCharacters] = useState([]);
@@ -49,9 +62,31 @@ export default function MyApp() {
   }
 
   return (
-    <div className="container">
-      <Table characterData={characters} removeCharacter={removeOneCharacter} />
-      <Form handleSubmit={updateList} />
-    </div>
+    <BrowserRouter>
+      <nav style={{ padding: 8, display: "flex", gap: 12 }}>
+        <Link to="/simulate">Collision Simulator</Link>
+        <Link to="/dashboard">Dashboard</Link>
+      </nav>
+
+      <Routes>
+        {/* Send "/" to the simulator by default */}
+        <Route path="/" element={<Navigate to="/simulate" replace />} />
+
+        <Route path="/simulate" element={<LegacySim />} />
+        <Route
+          path="/dashboard"
+          element={
+            <Dashboard
+              characters={characters}
+              removeOneCharacter={removeOneCharacter}
+              updateList={updateList}
+            />
+          }
+        />
+
+        {/* Fallback for unknown routes */}
+        <Route path="*" element={<Navigate to="/simulate" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

@@ -16,5 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "mongodb": "^6.20.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
   }
 }
